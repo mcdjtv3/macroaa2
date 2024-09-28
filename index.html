@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - The Goods Market and Macroeconomic Equilibrium</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "In the context of the goods market, which of the following does not directly affect aggregate demand in a closed economy?", choices: ["Consumption", "Investment", "Government spending", "Exports"], correct: 3 },
+        { question: "The consumption function is given by C=C0+C1(Y−T). What does C1 represent?", choices: ["Autonomous consumption", "Marginal propensity to consume", "Total consumption", "Disposable income"], correct: 1 },
+        { question: "Which of the following is not considered part of government spending in the GDP calculation?", choices: ["Purchase of military equipment", "Salaries of government employees", "Transfer payments such as unemployment benefits", "Infrastructure investments"], correct: 2 },
+        { question: "If the marginal propensity to consume C1 is 0.8, what is the value of the multiplier?", choices: ["2.5", "4", "5", "10"], correct: 2 },
+        { question: "In an open economy, what does a trade deficit indicate?", choices: ["Exports are greater than imports", "Imports are greater than exports", "Government spending exceeds tax revenue", "Disposable income is higher than consumption"], correct: 1 },
+        { question: "Which of the following statements best describes the paradox of saving in the short run?", choices: ["An increase in savings leads to higher income and output", "An increase in savings leads to lower output and lower total savings", "A decrease in consumption leads to increased investment", "Higher savings result in higher inflation"], correct: 1 },
+        { question: "What is the equilibrium condition for the goods market in terms of investment and savings?", choices: ["Savings equals investment", "Savings equals consumption", "Savings is greater than investment", "Investment equals taxes"], correct: 0 },
+        { question: "How does an increase in government spending affect the goods market equilibrium in the short run?", choices: ["It decreases aggregate demand", "It shifts the demand curve downward", "It increases aggregate demand and shifts the equilibrium output upward", "It decreases consumption"], correct: 2 },
+        { question: "Which of the following factors would not directly cause a shift in the consumption function?", choices: ["A change in disposable income", "A change in interest rates", "A change in autonomous consumption C0", "A change in consumer confidence"], correct: 1 },
+        { question: "In a situation where production exceeds sales, what happens to inventory investment?", choices: ["It becomes negative", "It becomes positive", "It remains constant", "It leads to a decrease in government spending"], correct: 1 },
+        { question: "Which component of aggregate demand is most likely to be considered an exogenous variable?", choices: ["Government spending", "Consumption", "Private investment", "Disposable income"], correct: 0 },
+        { question: "In an economy where taxes exceed government spending, what can be said about public saving?", choices: ["Public saving is positive", "Public saving is negative", "Public saving is equal to zero", "Public saving increases as consumption increases"], correct: 0 },
+        { question: "What happens to private saving when taxes increase, assuming all else remains constant?", choices: ["Private saving increases", "Private saving decreases", "Private saving remains unchanged", "Private saving becomes negative"], correct: 1 },
+        { question: "Which of the following would lead to an increase in autonomous spending?", choices: ["A decrease in consumer confidence", "An increase in government transfers", "An increase in the marginal propensity to save", "A reduction in interest rates"], correct: 1 },
+        { question: "In the short run, how does an increase in the marginal propensity to consume affect the multiplier?", choices: ["It decreases the multiplier", "It has no effect on the multiplier", "It increases the multiplier", "It leads to a decrease in government spending"], correct: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
